@@ -13,10 +13,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+//root
 Route::get('/', function () {
-    return view('welcome');
+    return view('landingPage');
 });
+
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia\Inertia::render('Dashboard');
 })->name('dashboard');
+
+Route::get('test',function(){
+    return view('test');
+});
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::resource('posts', App\Http\Controllers\PostController::class)->except([
+        'create', 'show'
+    ]);
+
+    Route::resource('comments', App\Http\Controllers\CommentController::class)->only([
+        'store', 'update', 'destroy'
+    ]);
+});
