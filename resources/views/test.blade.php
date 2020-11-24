@@ -4,13 +4,13 @@
     </head>
     <body>
         <div id="app">
-            <hello-world/>
+            <hello-world></hello-world>
+            <p> Hier asuch: <hello-world></hello-world></p>
         </div>
 
-        <p> Hier auch: <hello-world/></p>
         <script>
             Vue.component('hello-world', {
-                template: '<div>Hello World from Vue-Component</div>'
+                template: '<div>Hello World Yeah</div>'
             });
             new Vue({el: "#app"});
         </script>

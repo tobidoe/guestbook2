@@ -16,7 +16,28 @@ class PostController extends Controller
 //    todo: create api ressource controller for comments?
     public function index()
     {
-        //
+        //eager loading posts with users and with comments with users
+        $posts = Post::with('user')
+            ->with('comments', 'comments.user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+
+        //displays posts-comments-users-structure for testing purposes
+        foreach ($posts as $post){
+            echo
+                '<p>'
+                .$post->user->name .':<br>'
+                .$post->body;
+            foreach ($post->comments as $comment){
+                echo '<br>Antwort von '
+                .$comment->user->name
+                    .':<br>'
+                    .$comment->body;
+            }
+        }
+
+
     }
 
 
