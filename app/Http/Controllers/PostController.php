@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AuthenticatedUser;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -22,21 +26,9 @@ class PostController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-
-        //displays posts-comments-users-structure for testing purposes
-        foreach ($posts as $post){
-            echo
-                '<p>'
-                .$post->user->name .':<br>'
-                .$post->body;
-            foreach ($post->comments as $comment){
-                echo '<br>Antwort von '
-                .$comment->user->name
-                    .':<br>'
-                    .$comment->body;
-            }
-        }
-
+        $posts = PostResource::collection($posts);
+        $authenticatedUser = new AuthenticatedUser(Auth::user());
+        return Inertia::render('GuestbookPage',['posts' => $posts, 'authUser' => $authenticatedUser]);
 
     }
 

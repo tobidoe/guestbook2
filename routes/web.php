@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 
 //root
-Route::get('/', function () {
-    return view('landingPage');
-});
+Route::get('/','App\Http\Controllers\PostController@index');
+
 
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
@@ -31,11 +32,11 @@ Route::get('test',function(){
 
 Route::middleware('auth')->group(function () {
 
-    Route::resource('posts', App\Http\Controllers\PostController::class)->except([
+    Route::resource('posts', PostController::class)->except([
         'create', 'show'
     ]);
 
-    Route::resource('comments', App\Http\Controllers\CommentController::class)->only([
+    Route::resource('comments', CommentController::class)->only([
         'store', 'update', 'destroy'
     ]);
 });
