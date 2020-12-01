@@ -17,7 +17,8 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        auth()->user()->comments()->create($request->except('_token'));
+        return redirect()->back();
     }
 
 

@@ -27,8 +27,19 @@ class PostController extends Controller
             ->get();
 
         $posts = PostResource::collection($posts);
-        $authenticatedUser = new AuthenticatedUser(Auth::user());
-        return Inertia::render('GuestbookPage',['posts' => $posts, 'authUser' => $authenticatedUser]);
+
+        //todo: Is there a nicer solution?
+        $authenticatedUser = null;
+        if (Auth::check()) {
+            $authenticatedUser = new AuthenticatedUser(Auth::user());
+        }
+
+        return Inertia::render('GuestbookPage',
+            [
+                'posts' => $posts,
+                'authUser' => $authenticatedUser,
+                'csrfToken' => csrf_token(),
+            ]);
 
     }
 
@@ -37,11 +48,11 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        auth()->user()->posts()->create($request->except('_token'));
+        return redirect()->back();
     }
 
 
@@ -65,7 +76,15 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        //checks if the post to edit is users own post
+        if (auth()->id() != $post->user->id) {
+            return 'Du kannst nur deine eigenen Posts ändern';
+        }
+
+        $post->body = request('body');
+        $post->save();
+
+        return redirect()->back();
     }
 
     /**
@@ -76,7 +95,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        foreach ($post->comments as $comment) {
+            $comment->delete();
+        }
+        $post->delete();
+        return redirect()->back();
     }
 
 
