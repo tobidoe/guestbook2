@@ -9,12 +9,7 @@ class CommentController extends Controller
 {
 
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+//    store a freshly created comment in database
     public function store(Request $request)
     {
         auth()->user()->comments()->create($request->except('_token'));
@@ -22,26 +17,26 @@ class CommentController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
+//update a specific comment in database
     public function update(Request $request, Comment $comment)
     {
-        //
+        //check if the comment to update is users own comment
+        if (auth()->id() != $comment->user->id) {
+            return 'Du kannst nur deine eigenen Kommentare ändern';
+        }
+
+        //update comments body and update comment in database
+        $comment->body = request('body');
+        $comment->save();
+
+        return redirect()->back();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
+    //remove a specified comment with comments from storage
     public function destroy(Comment $comment)
     {
-        //
+
+        $comment->delete();
+        return redirect()->back();
     }
 }

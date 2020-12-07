@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\AuthenticatedUser;
+use App\Http\Resources\AuthenticatedUserResource;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Comment;
@@ -12,26 +12,23 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-//    todo: create api ressource controller for comments?
+
+    //return main page
+    //    todo: create api resource controller for comments (lookup api resource routes)?
     public function index()
     {
-        //eager loading posts with users and with comments with users
+        //eager load posts with users and with comments with users
         $posts = Post::with('user')
             ->with('comments', 'comments.user')
             ->orderBy('created_at', 'desc')
             ->get();
 
+        //use resources instead of Eloquent models
         $posts = PostResource::collection($posts);
-
-        //todo: Is there a nicer solution?
+        //todo: Is there a nicer solution (perhaps with exception handling in AuthenticatedUserResource)?
         $authenticatedUser = null;
         if (Auth::check()) {
-            $authenticatedUser = new AuthenticatedUser(Auth::user());
+            $authenticatedUser = new AuthenticatedUserResource(Auth::user());
         }
 
         return Inertia::render('GuestbookPage',
@@ -40,15 +37,10 @@ class PostController extends Controller
                 'authUser' => $authenticatedUser,
                 'csrfToken' => csrf_token(),
             ]);
-
     }
 
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     */
+    //store a freshly created post in database
     public function store(Request $request)
     {
         auth()->user()->posts()->create($request->except('_token'));
@@ -56,61 +48,36 @@ class PostController extends Controller
     }
 
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Post $post
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Post $post)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Post $post
-     * @return \Illuminate\Http\Response
-     */
+    //update a specific post in database
+    //todo: why does 'function update(..., Post $post)' work (learn about dependency injection)?
     public function update(Request $request, Post $post)
     {
-        //checks if the post to edit is users own post
+        //check if the post to update is users own post
         if (auth()->id() != $post->user->id) {
             return 'Du kannst nur deine eigenen Posts ändern';
         }
 
+        //update posts body and update post in database
         $post->body = request('body');
         $post->save();
 
         return redirect()->back();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Models\Post $post
-     * @return \Illuminate\Http\Response
-     */
+    //remove a specified post with comments from storage
     public function destroy(Post $post)
     {
+        //delete to post attached comments
+        //todo: is there a more straight forward way to remove foreign key constraints?
         foreach ($post->comments as $comment) {
             $comment->delete();
         }
+
         $post->delete();
         return redirect()->back();
     }
 
 
-    //generates and stores 20 posts, each with 1 user and 0-6 comments
-    public function generatePosts()
-    {
-        for ($i = 1; $i < 20; $i++) {
-            $post_id = Post::factory()->create()->id;
-            for ($j = 1; $j < rand(1, 7); $j++) {
-                Comment::factory()->create(['post_id' => $post_id]);
-            }
-        }
-    }
+
 }

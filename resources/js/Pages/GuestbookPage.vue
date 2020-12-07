@@ -1,56 +1,18 @@
 <template>
-    <div>
-        <site-header :authUser="authUser"/>
-        <h1>Gästebuch</h1>
-        <div>
 
-            <!--            todo: does it make sense to reduce boilerplate code here (double svg element)?-->
-            <button v-if="authUser" @click="showFormNewPost = !showFormNewPost">
-                <svg style="display:inline" height="10" width="10" stroke="black" fill="none">
-                    <path :class="{'hidden' : !showFormNewPost }" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2" d="M2 0L5 8L8 0"/>
-                    <path :class="{'hidden' : showFormNewPost }" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2" d="M2 8L5 0L8 8"/>
-                </svg>
-                Neuer Eintrag
-                <svg style="display:inline" height="10" width="10" stroke="black" fill="none">
-                    <path :class="{'hidden' : !showFormNewPost }" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2" d="M2 0L5 8L8 0"/>
-                    <path :class="{'hidden' : showFormNewPost }" stroke-linecap="round" stroke-linejoin="round"
-                          stroke-width="2" d="M2 8L5 0L8 8"/>
-                </svg>
-
-            </button>
-
-            <!--            todo: Ho to redirect to '/' after login? ('HOME' is set to '/' in RouteServiceProvider and 'config/fortify.php' references 'HOME', but the redirect is still to /dashboard. Why doesn´t it work, do i have to use https://laravel.com/docs/8.x/authentication#authenticating-users really?
+    <!--            todo: How to redirect to '/' after login? ('HOME' is set to '/' in RouteServiceProvider and 'config/fortify.php' references 'HOME', but the redirect is still to /dashboard. Why doesn´t it work, do i have to use https://laravel.com/docs/8.x/authentication#authenticating-users really?
                             todo: read https://laracasts.com/discuss/channels/laravel/redirect-to-intended-url-jetstream-fortify)-->
-            <p v-else style="margin:10px">
-                <a href="/login">Logge dich ein</a>
-                oder
-                <a href="/register">registriere dich</a>
-                um einen Beitrag verfassen zu können
-            </p>
 
+    <div>
 
-            <form :class="{'hidden' : showFormNewPost }" action="/posts" method="post">
-                <input type="hidden" name="_token" :value="csrfToken">
-                <br>
-                <textarea id="body" name="body"
-                          placeholder="Bis zu 2000 Zeichen"
-                          rows="10" cols="50"
-                          required
-                          minlength="5"
-                          maxlength="2000"
-                          aria-label="Schreibe einen neuen Eintrag">
+        <site-header :authUser="authUser"/>
 
-                </textarea>
-                <br>
-                <input type="submit" value="Eintrag anlegen"/>
-                <a  @click.prevent="clearForm('body')" href="">Abbrechen </a>
-            </form>
+        <h1>Gästebuch</h1>
 
+        <div>
+            <ResponsiveFormNewPost v-if="authUser" :csrfToken="csrfToken"/>
+            <disclaimer-login v-else/>
         </div>
-
 
 
         <div v-for="post in posts" :key="post.id">
@@ -60,10 +22,13 @@
     </div>
 </template>
 
+
 <script>
 
 import UserPost from "@/components/UserPost";
 import SiteHeader from "@/components/SiteHeader";
+import DisclaimerLogin from "@/components/DisclaimerLogin";
+import ResponsiveFormNewPost from "@/components/ResponsiveFormNewPost";
 
 export default {
     name: "GuestbookPage",
@@ -82,14 +47,14 @@ export default {
     },
 
     data: function () {
-        return {
-            showFormNewPost: true
-        }
+        return {}
     },
 
     components: {
+        DisclaimerLogin,
         UserPost,
         SiteHeader,
+        ResponsiveFormNewPost,
     },
 
     methods: {
@@ -101,10 +66,7 @@ export default {
             })
         },
 
-        clearForm (element){
-            document.getElementById(element).value='';
-            this.showFormNewPost=!this.showFormNewPost;
-        }
+
     },
 }
 </script>
@@ -120,10 +82,6 @@ export default {
 h1, button, form, textarea, submit, input, a {
     all: revert;
 }
-
-/*button {*/
-/*    margin: 10px;*/
-/*}*/
 
 .hidden {
     display: none;

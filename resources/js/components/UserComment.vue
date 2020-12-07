@@ -2,7 +2,7 @@
     <div class="user-comment">
 
         <p class="user-comment-header" style="overflow: hidden">
-            <span style = "float: left">{{ comment.user.name }}</span>
+            <a :href="'/user/'+comment.user.id" style="float: left">{{ comment.user.name }}</a>
             <span style = "float: right">{{ comment.created_at}}</span>
 
 <!--           includes "edited on" date if post is edited-->
@@ -31,6 +31,10 @@ export default {
 
 .user-comment {
     margin: 40px
+}
+
+a {
+    all:revert;
 }
 
 .user-comment-header {

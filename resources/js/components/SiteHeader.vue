@@ -1,40 +1,31 @@
 <template>
-    <div>
+    <div style="overflow:hidden">
 
-<!--        todo: Is there a better/nicer way to realize logout process? (Just copied from AppLayout.vue)-->
-        <form v-if="authUser" @submit.prevent="logout" style="text-align: right">
-            Hallo {{ authUser.name }}
-            <button type="submit">
-                Abmelden
-            </button>
-        </form>
+        <span style="float:left">
+            <a href="/">Gästebuch</a>
+            <a href="/dashboard">Dashboard</a>
+        </span>
 
-        <p v-else style="text-align: right">
-            <span style="margin:10px">Nicht angemeldet</span>
-            <a href="/login">Einloggen</a>
-            <a href="/register">Anmelden</a>
-        </p>
+        <span style="float:right">
+            <!--        todo: Is there a better way to realize logout process? (Just copied from AppLayout.vue)-->
+            <form v-if="authUser" @submit.prevent="logout" style="text-align: right">
+                Hallo {{ authUser.name }}
+                <button type="submit">
+                    Abmelden
+                </button>
+            </form>
 
-
-        <!--    @if (Route::has('login'))-->
-        <!--    <div id="menuLandingPage" style="float:none">-->
-        <!--        @auth-->
-        <!--        <a href="{{ url('/dashboard') }}" class="text-sm text-gray-700 underline">Dashboard</a>-->
-        <!--        <a href="{{ url('/posts') }}" >Gästebuch</a>-->
-        <!--        @else-->
-        <!--        <a href="{{ route('login') }}" class="text-sm text-gray-700 underline">Login</a>-->
-
-        <!--        @if (Route::has('register'))-->
-        <!--        <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 underline">Register</a>-->
-        <!--        @endif-->
-        <!--        @endif-->
-        <!--    </div>-->
-        <!--    @endif-->
-
+            <p v-else style="text-align: right">
+                <span style="margin:10px">Nicht angemeldet</span>
+                <a href="/login">Einloggen</a>
+                <a href="/register">Anmelden</a>
+            </p>
+        </span>
 
     </div>
 
 </template>
+
 
 <script>
 export default {

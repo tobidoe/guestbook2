@@ -1,7 +1,9 @@
 <template>
     <div class="user-post" style="overflow: hidden">
+
+        <!--        Header with username, create date and update date-->
         <p class="user-post-header" style="overflow: hidden">
-            <span style="float: left">{{ post.user.name }}</span>
+            <a :href="'/user/'+post.user.id" style="float: left">{{ post.user.name }}</a>
             <span style="float: right">{{ post.created_at }}</span>
 
             <!--           includes "edited on" date if post is edited-->
@@ -9,16 +11,19 @@
                 , geändert am {{ post.updated_at }}
             </template>
         </p>
-        <div v-if="showFormEditPost">
+
+
+        <!--        Content/body of post with links for delete and edit functionality if user is post owner-->
+        <div v-if="!showFormEditPost">
             <p>{{ post.body }}</p>
 
-
-            <div v-if="post.user.id==authUser.id" style="text-align:right; font-size: 75%">
-                <a href="#" @click="
+            <div v-if="authUser && post.user.id==authUser.id" style="text-align:right; font-size: 75%">
+                <a href="#" @click.prevent="
                     showFormEditPost = !showFormEditPost;
                     showButtonComment = !showButtonComment;
                 ">Ändern</a>
 
+                <!--                todo: is there a better way (form used for sending a DELETE-request)?-->
                 <form :action="'/posts/'+post.id" method="post" ref="form" style="display:inline">
                     <input type="hidden" name="_token" :value="csrfToken">
                     <input type="hidden" name="_method" value="DELETE">
@@ -26,6 +31,8 @@
                 </form>
             </div>
         </div>
+
+        <!--        edit post form-->
         <div v-else>
             <form :action="'/posts/'+post.id" method="post">
                 <input type="hidden" name="_token" :value="csrfToken">
@@ -44,29 +51,26 @@
             </form>
         </div>
 
+        <!--        all comments for this post-->
         <user-comment v-for="comment in post.comments"
                       v-bind:comment="comment"
                       :key="comment.id"
         />
 
+
+        <!--        Footer with comment button (or login disclaimer) or new comment form-->
         <div class="user-post-footer">
 
-            <button
-                v-if="authUser"
-                :class="{'hidden' : !showButtonComment }"
-                @click="
+            <button v-if="authUser"
+                    :class="{'hidden' : !showButtonComment }"
+                    @click="
                     showFormNewComment = !showFormNewComment;
                     showButtonComment = !showButtonComment
                 ">
                 Kommentieren
             </button>
 
-            <p v-else style="margin:10px">
-                <a href="/login">Logge dich ein</a>
-                oder
-                <a href="/register">registriere dich</a>
-                um einen Kommentar hinterlassen zu können
-            </p>
+            <DisclaimerLogin v-else/>
 
 
             <form :class="{'hidden' : showFormNewComment }" action="/comments" method="post">
@@ -96,6 +100,7 @@
 <script>
 
 import UserComment from "@/components/UserComment"
+import DisclaimerLogin from "@/components/DisclaimerLogin";
 
 export default {
     name: "UserPost",
@@ -104,7 +109,7 @@ export default {
         return {
             showFormNewComment: true,
             showButtonComment: true,
-            showFormEditPost: true,
+            showFormEditPost: false,
         }
     },
 
@@ -120,7 +125,7 @@ export default {
         }
     },
 
-    components: {UserComment},
+    components: {DisclaimerLogin, UserComment},
 
     methods:
         {
@@ -159,10 +164,6 @@ export default {
 h1, button, form, textarea, submit, input, a {
     all: revert;
 }
-
-/*button {*/
-/*    margin: 10px;*/
-/*}*/
 
 .hidden {
     display: none;
