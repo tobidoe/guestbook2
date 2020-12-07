@@ -14,6 +14,6 @@ class LoginResponse implements LoginResponseContract
     {
         return $request->wantsJson()
             ? response()->json(['two_factor' => false])
-            : redirect()->intended(config('/')); // This is the line you want to modify so the application behaves the way you want.
+            : redirect()->intended(config('/')); // modify this to change the redirect after login and registration
     }
 }
