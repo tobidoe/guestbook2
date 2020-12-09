@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
 
 
 //Userinfo Page
+//comment: This should be in a dedicated Controller (user-controller)
 Route::get('/user/{user_id}', function ($user_id) {
 
     //eager load user with posts and comments
@@ -63,6 +64,7 @@ Route::get('/user/{user_id}', function ($user_id) {
     //use resource instead of model
     $user = new \App\Http\Resources\UserForUserInfoResource($user);
     //todo: do i really have to do this every time i use SiteHeader?
+    //comment: No
     $authenticatedUser = null;
     if (Auth::check()) {
         $authenticatedUser = new AuthenticatedUserResource(Auth::user());

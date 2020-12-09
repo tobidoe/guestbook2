@@ -26,8 +26,10 @@ class PostController extends Controller
         //use resources instead of Eloquent models
         $posts = PostResource::collection($posts);
         //todo: Is there a nicer solution (perhaps with exception handling in AuthenticatedUserResource)?
+        //comment This should be part of a middleware
         $authenticatedUser = null;
         if (Auth::check()) {
+            //comment Probably you need the user in every route. This can be abstracted out to some shared Data (cf. Inertia docs)
             $authenticatedUser = new AuthenticatedUserResource(Auth::user());
         }
 
@@ -35,6 +37,7 @@ class PostController extends Controller
             [
                 'posts' => $posts,
                 'authUser' => $authenticatedUser,
+                //comment: Same applies to the csrf token
                 'csrfToken' => csrf_token(),
             ]);
     }
@@ -43,6 +46,7 @@ class PostController extends Controller
     //store a freshly created post in database
     public function store(Request $request)
     {
+        //comment: I'm not sure, but I think it's not necessary to exclude the token. Fields starting with an underscore are stripped automatically
         auth()->user()->posts()->create($request->except('_token'));
         return redirect()->back();
     }
@@ -54,6 +58,7 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         //check if the post to update is users own post
+        //comment: Check how policies work
         if (auth()->id() != $post->user->id) {
             return 'Du kannst nur deine eigenen Posts ändern';
         }

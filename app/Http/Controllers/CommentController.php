@@ -21,6 +21,7 @@ class CommentController extends Controller
     public function update(Request $request, Comment $comment)
     {
         //check if the comment to update is users own comment
+        //comment: Policy!
         if (auth()->id() != $comment->user->id) {
             return 'Du kannst nur deine eigenen Kommentare ändern';
         }

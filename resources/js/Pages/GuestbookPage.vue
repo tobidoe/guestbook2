@@ -60,6 +60,7 @@ export default {
     methods: {
 
         // todo: whats done here exactly (what is axios?)? / is there a better/nicer way to do this? (Just copied from AppLayout.vue)
+        //comment: Where is this used?
         logout() {
             axios.post(route('logout').url()).then(response => {
                 window.location = '/';
@@ -74,6 +75,7 @@ export default {
 <style scoped>
 
 /*todo: is there a better way to circumvent tailwind?*/
+/*comment: You just shouldn't*/
 
 * {
     margin: 2px;

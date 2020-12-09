@@ -19,6 +19,7 @@
         </button>
 
 <!--        responsive form for sending a new post-->
+<!--        comment: why not work with v-show/v-if instead of the dynamic class? -->
         <form :class="{'hidden' : !showFormNewPost }" action="/posts" method="post">
             <input type="hidden" name="_token" :value="csrfToken">
             <br>
@@ -32,6 +33,7 @@
 
                 </textarea>
             <br>
+<!--            comment: Let's do this asynchronously!-->
             <input type="submit" value="Eintrag anlegen"/>
             <a @click.prevent="abortEdit('body')" href="">Abbrechen </a>
         </form>
@@ -59,6 +61,7 @@ export default {
 
         // clear the content of given element and toggle showFormNewPost
         abortEdit(element) {
+            //comment: Why not work with v-model?
             document.getElementById(element).value = '';
             this.showFormNewPost = !this.showFormNewPost;
         },

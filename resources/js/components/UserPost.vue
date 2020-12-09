@@ -1,7 +1,9 @@
 <template>
+<!--    comment: Try to avoid inline styles whereever possible-->
     <div class="user-post" style="overflow: hidden">
 
         <!--        Header with username, create date and update date-->
+        <!--    comment: Try to avoid custom classes whereever possible-->
         <p class="user-post-header" style="overflow: hidden">
             <a :href="'/user/'+post.user.id" style="float: left">{{ post.user.name }}</a>
             <span style="float: right">{{ post.created_at }}</span>
@@ -18,6 +20,7 @@
             <p>{{ post.body }}</p>
 
             <div v-if="authUser && post.user.id==authUser.id" style="text-align:right; font-size: 75%">
+ <!--                comment: Things like that should be extracted to a dedicated method-->
                 <a href="#" @click.prevent="
                     showFormEditPost = !showFormEditPost;
                     showButtonComment = !showButtonComment;
@@ -38,6 +41,7 @@
                 <input type="hidden" name="_token" :value="csrfToken">
                 <input type="hidden" name="_method" value="PATCH">
                 <!--                todo: Is there a way to style this code without whitespace?-->
+<!--                comment: ? I don't understand...-->
                 <textarea id="body" name="body"
                           placeholder="Bis zu 2000 Zeichen"
                           rows="10" cols="50"
@@ -130,6 +134,7 @@ export default {
     methods:
         {
             clearFormComment(element) {
+                //comment: Work with v-model instead
                 document.getElementById(element).value = '';
                 this.showFormNewComment = !this.showFormNewComment;
                 this.showButtonComment = !this.showButtonComment;

@@ -2,6 +2,7 @@
     <div class="user-comment">
 
         <p class="user-comment-header" style="overflow: hidden">
+<!--            comment: Is there a better way to deal with urls? Looks a bit ugly, doesn't it? -->
             <a :href="'/user/'+comment.user.id" style="float: left">{{ comment.user.name }}</a>
             <span style = "float: right">{{ comment.created_at}}</span>
 
