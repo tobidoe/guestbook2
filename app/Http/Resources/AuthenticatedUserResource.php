@@ -14,12 +14,19 @@ class AuthenticatedUserResource extends JsonResource
      */
     public function toArray($request)
     {
+        if(!$this->exists) {
+            return [
+                '_exists' => false
+            ];
+        }
+
+
         return [
+            '_exists' => true,
             'id'=>$this->id,
             'name'=>$this->name,
             'email'=>$this->email,
             'profile_photo'=>$this->profile_photo,
-
         ];
     }
 }

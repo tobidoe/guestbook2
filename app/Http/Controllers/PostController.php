@@ -6,6 +6,7 @@ use App\Http\Resources\AuthenticatedUserResource;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\Comment;
+use Illuminate\Filesystem\Cache;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -27,11 +28,7 @@ class PostController extends Controller
         $posts = PostResource::collection($posts);
         //todo: Is there a nicer solution (perhaps with exception handling in AuthenticatedUserResource)?
         //comment This should be part of a middleware
-        $authenticatedUser = null;
-        if (Auth::check()) {
-            //comment Probably you need the user in every route. This can be abstracted out to some shared Data (cf. Inertia docs)
             $authenticatedUser = new AuthenticatedUserResource(Auth::user());
-        }
 
         return Inertia::render('GuestbookPage',
             [
@@ -51,14 +48,13 @@ class PostController extends Controller
         return redirect()->back();
     }
 
-
-
     //update a specific post in database
     //todo: why does 'function update(..., Post $post)' work (learn about dependency injection)?
+    //comment: Route-Model-Binding
     public function update(Request $request, Post $post)
     {
         //check if the post to update is users own post
-        //comment: Check how policies work
+        //comment: Check how policies work (Authorization)
         if (auth()->id() != $post->user->id) {
             return 'Du kannst nur deine eigenen Posts ändern';
         }
@@ -75,6 +71,7 @@ class PostController extends Controller
     {
         //delete to post attached comments
         //todo: is there a more straight forward way to remove foreign key constraints?
+        //comment: $post->comments->each->delete() (Laravel-Collections-HigherOrderCollections)
         foreach ($post->comments as $comment) {
             $comment->delete();
         }

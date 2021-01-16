@@ -1,5 +1,6 @@
 <template>
 <!--    comment: Try to avoid inline styles whereever possible-->
+
     <div class="user-post" style="overflow: hidden">
 
         <!--        Header with username, create date and update date-->
@@ -103,7 +104,7 @@
 
 <script>
 
-import UserComment from "@/components/UserComment"
+import UserComment from "@/components/UserComment";
 import DisclaimerLogin from "@/components/DisclaimerLogin";
 
 export default {

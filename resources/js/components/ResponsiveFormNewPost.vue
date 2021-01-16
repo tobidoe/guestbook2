@@ -27,6 +27,7 @@
                       placeholder="Bis zu 2000 Zeichen"
                       rows="10" cols="50"
                       required
+                      v-model="content"
                       minlength="5"
                       maxlength="2000"
                       aria-label="Schreibe einen neuen Eintrag">
@@ -34,7 +35,8 @@
                 </textarea>
             <br>
 <!--            comment: Let's do this asynchronously!-->
-            <input type="submit" value="Eintrag anlegen"/>
+<!--            <input type="submit" value="Eintrag anlegen"/>-->
+            <button type="button" @click="submit">Absenden</button>
             <a @click.prevent="abortEdit('body')" href="">Abbrechen </a>
         </form>
 
@@ -47,6 +49,7 @@ export default {
 
     data: function () {
         return {
+            content: '',
             showFormNewPost: false
         }
     },
@@ -62,9 +65,16 @@ export default {
         // clear the content of given element and toggle showFormNewPost
         abortEdit(element) {
             //comment: Why not work with v-model?
+            this.content = '';
             document.getElementById(element).value = '';
             this.showFormNewPost = !this.showFormNewPost;
         },
+
+        submit() {
+            axios.post('/posts',{body: this.content }).then( () => {
+
+            })
+        }
     },
 
 
